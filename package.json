@@ -1,0 +1,19 @@
+{
+    "name": "xaliphostes/wc",
+    "version": "0.0.0",
+    "description": "",
+    "author": "fmaerten@gmail.com",
+    "keywords": [
+        "geometry",
+        "youwol"
+    ],
+    "scripts": {
+        "serve": "http-server . -p 93 -o index.html"
+    },
+    "peerDependencies": {},
+    "devDependencies": {},
+    "youwol": {
+        "pipeline": {},
+        "cdnDependencies": {}
+    }
+}

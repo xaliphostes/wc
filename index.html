@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <script src="https://webpm.org/^2.0.4/cdn-client.js"></script>
+</head>
+
+<body class="vw-100 vh-100"></body>
+<script type="module">
+    const cdnClient = window['@youwol/cdn-client']
+    const { VSF, Canvas, FV, rxjs } = await cdnClient.install({
+        modules: ['@youwol/vsf-core#^0.1.2', '@youwol/flux-view', '@youwol/vsf-canvas#^0.1.1'],
+        css: [
+            'bootstrap#^4.4.0~bootstrap.min.css',
+            'fontawesome#5.12.1~css/all.min.css',
+            '@youwol/fv-widgets#latest~dist/assets/styles/style.youwol.css'],
+        aliases: {
+            VSF: '@youwol/vsf-core', Canvas: '@youwol/vsf-canvas', FV: '@youwol/flux-view'
+        },
+        displayLoadingScreen: true
+    })
+    let project = new VSF.Projects.ProjectState()
+    project = await project.import("@youwol/vsf-three", '@youwol/vsf-pmp', '@youwol/vsf-rxjs')
+    project = await project.parseDag([
+        "(of#of)>>(torusKnot#geom)>>(fromThree#three->pmp)>>(uniformRemeshing#remesh)>>(toThree#pmp->three)>>0(combineLatest#combine)>>(mesh#threeMesh)>>(viewer#viewer)",
+        "(#of)>>(standardMaterial#material)>>1(#combine)"
+    ], {
+        material: { wireframe: true },
+        remesh: { edgeFactor: 0.7 }
+    })
+    document.body.append(FV.render({
+        class: 'h-100',
+        children: [
+            {
+                class: 'h-50',
+                children: [project.instancePool.inspector().getModule('viewer').html()]
+            },
+            {
+                class: 'h-50',
+                children: [new Canvas.Renderer3DView({ project$: rxjs.of(project), workflowId: 'main' })]
+            }
+        ]
+    }))
+</script>
+
+</html>
