@@ -1,7 +1,7 @@
 function plot(div, x, y, options = {
     title: 'Reactivation as a function of μ',
-    width: 500,
-    height: 500,
+    width: 400,
+    height: 400,
     xaxis: {
         title: 'ϕ',
         range: [0, 1],

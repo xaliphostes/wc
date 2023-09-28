@@ -34,8 +34,8 @@ function splom(div, datas, labels) {
 
     const layout = {
         title: 'Data',
-        height: 500,
-        width: 500,
+        height: 400,
+        width: 400,
         autosize: false,
         plot_bgcolor: 'rgba(240,240,240, 0.95)',
         xaxis: axis(),
