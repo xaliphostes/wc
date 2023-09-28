@@ -2,45 +2,176 @@
 <html lang="en">
 
 <head>
-    <script src="https://webpm.org/^2.0.4/cdn-client.js"></script>
+    <script src="./libs/dataframe.js"></script>
+    <script src="./libs/math.js"></script>
+    <script src="./libs/popper.min.js"></script>
+    <script src="./libs/d3.min.js"></script>
+    <script src="./libs/plotly.min.js"></script>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+        crossorigin="anonymous"></script>
+    <!-- <script src="https://code.jquery.com/jquery-3.7.1.min.js"
+        integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script> -->
+    <link rel="stylesheet" href="js/style.css">
+
 </head>
 
-<body class="vw-100 vh-100"></body>
-<script type="module">
-    const cdnClient = window['@youwol/cdn-client']
-    const { VSF, Canvas, FV, rxjs } = await cdnClient.install({
-        modules: ['@youwol/vsf-core#^0.1.2', '@youwol/flux-view', '@youwol/vsf-canvas#^0.1.1'],
-        css: [
-            'bootstrap#^4.4.0~bootstrap.min.css',
-            'fontawesome#5.12.1~css/all.min.css',
-            '@youwol/fv-widgets#latest~dist/assets/styles/style.youwol.css'],
-        aliases: {
-            VSF: '@youwol/vsf-core', Canvas: '@youwol/vsf-canvas', FV: '@youwol/flux-view'
-        },
-        displayLoadingScreen: true
-    })
-    let project = new VSF.Projects.ProjectState()
-    project = await project.import("@youwol/vsf-three", '@youwol/vsf-pmp', '@youwol/vsf-rxjs')
-    project = await project.parseDag([
-        "(of#of)>>(torusKnot#geom)>>(fromThree#three->pmp)>>(uniformRemeshing#remesh)>>(toThree#pmp->three)>>0(combineLatest#combine)>>(mesh#threeMesh)>>(viewer#viewer)",
-        "(#of)>>(standardMaterial#material)>>1(#combine)"
-    ], {
-        material: { wireframe: true },
-        remesh: { edgeFactor: 0.7 }
-    })
-    document.body.append(FV.render({
-        class: 'h-100',
-        children: [
-            {
-                class: 'h-50',
-                children: [project.instancePool.inspector().getModule('viewer').html()]
-            },
-            {
-                class: 'h-50',
-                children: [new Canvas.Renderer3DView({ project$: rxjs.of(project), workflowId: 'main' })]
-            }
-        ]
-    }))
-</script>
+<body>
+
+    <!-- ============================================================== -->
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Menu</a>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            Data
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <li><a class="dropdown-item" href="#">Upload</a></li>
+                            <li><a class="dropdown-item" href="#">Clear</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            Simulation
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <li><a class="dropdown-item" href="#">Run</a></li>
+                            <li><a class="dropdown-item" href="#">Change search method</a></li>
+                            <li><a class="dropdown-item" href="#">Setup</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            Help
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <li><a class="dropdown-item" href="#">General</a></li>
+                            <li><a class="dropdown-item" href="#">Type of data</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="#" data-bs-toggle="modal"
+                            data-bs-target="#exampleModal">About</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">About</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <b>StressInv</b>, from geoscience Montpellier and YouWol
+                    <hr class="hr" />
+                    <div class="container">
+                        <div class="row align-items-start">
+                            <div class="col">
+                                <a href="http://www.gm.univ-montp2.fr/" target="_blank">
+                                    <img src="media/geosciences.png" class="img-fluid" style="width: 100px;">
+                                </a>
+                            </div>
+                            <div class="col">
+                                <a href="https://www.youwol.com/" target="_blank">
+                                    <img src="media/youwol.png" class="img-fluid" style="width: 100px;">
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <hr class="hr" />
+                    2023, MIT license
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================== -->
+
+    <div class="container">
+        <div class="row align-items-start">
+            <div class="col">
+                <div id='plotDiv'></div>
+            </div>
+            <div class="col">
+                <div id='splomDiv'></div>
+            </div>
+            <div class="col">
+                <div id='histoDiv'></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================== -->
+
+    <div class="container-fluid">
+        <label for="fric" class="form-label">μ</label>
+        <div class="range">
+            <input type="range" class="form-range w-25" id="fric" min="0" max="1" step="0.1" value="0">
+        </div>
+    </div>
+
+    <div class="container-fluid">
+        <label for="S1" class="form-label">σ1</label>
+        <div class="range">
+            <input type="range" class="form-range w-25" id="S1" min="0" max="10" step="0.1" value="10">
+        </div>
+    </div>
+
+    <div class="container-fluid">
+        <label for="S3" class="form-label">σ3</label>
+        <div class="range">
+            <input type="range" class="form-range w-25" id="S3" max="10" step="0.1" value="5">
+        </div>
+    </div>
+
+    <div class="container-fluid">
+        <label for="phi" class="form-label">R</label>
+        <div class="range">
+            <input type="range" class="form-range w-25" id="phi" min="0" max="10" step="0.1", max="10" step="0.1" value="5">
+        </div>
+    </div>
+
+    <!-- ============================================================== -->
+
+    <script src="js/wc.js"></script>
+    <script src="js/plot.js"></script>
+    <script src="js/splom.js"></script>
+    <script src="js/histogram.js"></script>
+    <script>
+        const dataframe = window['libs/@youwol/dataframe']
+        const math = window['libs/@youwol/math']
+
+        const wc = new WC({ areas: [], positions: [], normals: [] })
+
+        plot('plotDiv',
+            new Array(1000).fill(0).map((v, i) => i / 1000),
+            new Array(1000).fill(0).map((v, i) => Math.abs(Math.sin(i / 100)))
+        )
+
+        const N = 100
+        const a1 = new Array(N).fill(0).map(i => Math.random())
+        const a2 = new Array(N).fill(0).map(i => Math.random())
+        const a3 = new Array(N).fill(0).map(i => Math.random())
+        splom('splomDiv', [a1, a2, a3], ['a1', 'a2', 'a3'])
+
+        histogram("histoDiv", new Array(500).fill(0).map( _ => Math.random() ))
+
+    </script>
+</body>
 
 </html>

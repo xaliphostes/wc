@@ -1,19 +1,12 @@
 {
-    "name": "xaliphostes/wc",
+    "name": "@xaliphostes/wc",
     "version": "0.0.0",
-    "description": "",
     "author": "fmaerten@gmail.com",
-    "keywords": [
-        "geometry",
-        "youwol"
-    ],
     "scripts": {
-        "serve": "http-server . -p 93 -o index.html"
+        "serve": "http-server . -p 94 -o index.html"
     },
-    "peerDependencies": {},
-    "devDependencies": {},
-    "youwol": {
-        "pipeline": {},
-        "cdnDependencies": {}
+    "devDependencies": {
+        "@youwol/dataframe": "0.0.37",
+        "@youwol/math": "0.0.27"
     }
 }
