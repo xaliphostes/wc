@@ -1,4 +1,4 @@
-function splom(div, datas, labels) {
+function splom(div, datas, labels, action='newPlot') {
     const colors = new Array(datas.length).fill(0).map( i => i/(datas.length-1) )
 
     const colorscale = [
@@ -40,8 +40,6 @@ function splom(div, datas, labels) {
         plot_bgcolor: 'rgba(240,240,240, 0.95)',
         xaxis: axis(),
         yaxis: axis()
-        // yaxis2: axis(),
-        // yaxis3: axis()
     }
 
     for (let i=0; i<datas.length-1; ++i) {
@@ -49,5 +47,5 @@ function splom(div, datas, labels) {
         layout['yaxis2'] = axis()
     }
 
-    Plotly.react(div, data, layout)
+    Plotly[action](div, data, layout)
 }
